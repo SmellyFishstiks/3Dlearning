@@ -1,6 +1,9 @@
 
 
+testCube = cube.new("Test Cube")
 
-testvector = vector.new("test", 1,2,3)
+testCamera = camera.new("test")
 
-print( testvector:list() )
+testCamera:draw()
+-- print out all points of the cube if you wanted.
+--testCube:list()

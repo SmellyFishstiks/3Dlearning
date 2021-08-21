@@ -14,9 +14,11 @@ function vector.new(name, x,y,z)
    )
 end
 
+
 -- list a vector's values
 function vector.list(self)
- print("vector " .. self.name .. "'s vars:")
+ 
+ print("vector; " .. self.name .. "'s vars:")
  for k,v in pairs(self) do
   print(k,v)
  end
