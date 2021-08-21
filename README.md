@@ -19,3 +19,8 @@ Tri, Mesh, and Model cube added to start playing with them,
 Playground.lua for testing and running our code in there,
 
 Camera class for making a screen to draw all of the perspective stuff to.
+
+# v0.1.3
+Camera projection, Meshes being added to world, Drawing to screen Vector maths
+
+And shortcuts for making my life easier. lots of progress!
