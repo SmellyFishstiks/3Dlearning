@@ -14,15 +14,12 @@ function cube.new(name)
         -- "south"
         tri.new( "SouthA", {0,0,0},{0,1,0},{1,1,0} ),
         tri.new( "SouthB", {0,0,0},{1,1,0},{1,0,0} ),
-        
         -- "east"
         tri.new( "EastA", {1,0,0},{1,1,0},{1,1,1} ),
         tri.new( "EastB", {1,0,0},{1,1,1},{1,0,1} ),
-        
         -- "north"
         tri.new( "NorthA", {1,0,1},{1,1,1},{0,1,1} ),
         tri.new( "NorthB", {1,0,1},{0,1,1},{0,0,1} ),
-        
         -- "west"
         tri.new( "WestA", {0,0,1},{0,1,1},{0,1,0} ),
         tri.new( "WestB", {0,0,1},{0,1,0},{0,0,0} ),
@@ -34,9 +31,7 @@ function cube.new(name)
         -- "bottom"
         tri.new( "BottomA", {1,0,1},{0,0,1},{0,0,0} ),
         tri.new( "BottomB", {1,0,1},{0,0,0},{1,0,0} )
-        
-       }
-      )
+       },true)
     },cube
    )
 end

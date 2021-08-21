@@ -3,18 +3,24 @@ local mesh={}
 mesh.__index = mesh
 
 -- new tri
-function mesh.new(name,tris)
-    return setmetatable(
-     {
-      tris=tris or {},
-      
-      name=name or "untitled mesh"
-    },mesh
-   )
+function mesh.new(name,tris,addToWorld)
+ local t=
+  {
+   tris=tris or {},
+   
+   name=name or "untitled mesh"
+ }
+ if addToWorld then
+  world.objects[#world.objects+1]=t
+  return setmetatable(t,mesh)
+ else 
+  return t
+ end
+ 
 end
 
 
--- list a vector's values
+-- list a mesh's values
 function mesh.list(self)
  
  print("mesh; " .. self.name .. "'s vars:")

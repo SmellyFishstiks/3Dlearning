@@ -22,7 +22,7 @@ function tri.new(name, one,two,three)
 end
 
 
--- list a vector's values
+-- list a tri's values
 function tri.list(self)
  
  print("tri; " .. self.name .. "'s vars:")
