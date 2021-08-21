@@ -7,8 +7,8 @@ camera.__index = camera
 -- new tri
 function camera.new( name, width, height, FOV )
     -- get width/height or defualt width/height
-    width = width   or floor( g.getWidth()/resolution )
-    height = height or floor( g.getHeight()/resolution)
+    width = width   or ceil( g.getWidth()/resolution )
+    height = height or ceil( g.getHeight()/resolution)
     
     FOV = FOV or 90
     local r = 1/tan(FOV*0.5 / 180 * π)
@@ -29,6 +29,8 @@ function camera.new( name, width, height, FOV )
       FOVRad=r,
       
       ratio=width/height,
+      
+      -- unlike other transformations this is dependent on the camera.
       projectionMath={
        vector.new("CameraProjection", (width/height)*r, nil, nil,                    nil),
        vector.new("CameraProjection", nil,              r,   nil,                    nil),
@@ -55,9 +57,8 @@ function camera.list(self)
 end
 
 
--- draw the camera to the screen somewhere
+-- draw the camera's screen to somewhere
 function camera.draw(self,x,y)
- 
  g.draw(self.screen,x or 0,y or 0)
 end
 
@@ -68,7 +69,7 @@ function camera.render(self)
  
  local c=g.getCanvas()
  g.setCanvas(self.screen)
-  g.clear(1,1,1)
+  g.clear()
   
   
   g.setColor(0,0,0)
@@ -81,76 +82,87 @@ function camera.render(self)
    
    for i=1,#meshToDraw.tris do
     local tri = meshToDraw.tris[i]
-    local p=tri.points
     
     -- deep copy the points so you don't edit them
-    local t={}
-    for i,v in ipairs(p) do
-     t[i]={
+    local copy={}
+    for i,v in ipairs(tri.points) do
+     copy[i]={
       multiplyMatrix=vector.multiplyMatrix
      }
      for k,v in pairs(v) do
-      t[i][k]=v
+      copy[i][k]=v
+     end
+     
+     -- pass the points the general rotation of the mesh
+     copy[i].w = copy[i].w + meshToDraw.position.rx
+     copy[i].v = copy[i].v + meshToDraw.position.rz
+    end
+    local p=copy
+    
+    -- [[ rotation
+    for i=1,3 do
+     updateTransformations( p[i].w,p[i].v )
+     
+     local triRotatedX = p[i]:multiplyMatrix( transformationTable.rotatations.x )
+     
+     if p[i].w~=0 then
+      p[i].x = triRotatedX.x
+      p[i].y = triRotatedX.y
+      p[i].z = triRotatedX.z
+     end
+     
+     
+     if p[i].v~=0 then
+      local triRotatedXZ = p[i]:multiplyMatrix( transformationTable.rotatations.z )
+      
+      p[i].x = triRotatedXZ.x
+      p[i].y = triRotatedXZ.y
+      p[i].z = triRotatedXZ.z
      end
     end
-    p=t
+    --]]
     
-    
-    -- temporary movement test
-    local t=time/30
-    for i=1,3 do
-     
-     
-     -- move these somewhere else!
-     local rotatations={
-      -- x
-      {
-       vector.new("rotation",1),
-       vector.new("rotation",0,cos(t/2),sin(t/2)),
-       vector.new("rotation",0,-sin(t/2)),
-       vector.new("rotation",0,0,0,1)
-      },
-      -- z
-      {
-       vector.new("rotation",cos(t), sin(t),0,0 ),
-       vector.new("rotation",-sin(t),cos(t),0,0 ),
-       vector.new("rotation",0,      0,     1,0 ),
-       vector.new("rotation",0,      0,     0,1 )
-      }
-     }
-     --[[
-     p[i].x= p[i]:multiplyMatrix(rotatations[1]).x
-     p[i].y= p[i]:multiplyMatrix(rotatations[1]).y
-     p[i].z= p[i]:multiplyMatrix(rotatations[1]).z
-     
-     p[i].x= p[i]:multiplyMatrix(rotatations[2]).x
-     p[i].y= p[i]:multiplyMatrix(rotatations[2]).y
-     p[i].z= p[i]:multiplyMatrix(rotatations[2]).z
-     --]]
+    -- apply object offset
+    for i,v in ipairs(tri.points) do
+     for k,v in pairs(v) do
+      
+      if k~="name" and k~="w" and k~="v" then
+       p[i][k]=p[i][k]+meshToDraw.position[k]
+      end
+      
+     end
     end
     
+    -- push stuff away from the camera a bit (wip?)
     for i=1,3 do
-     p[i].x = p[i].x + sin(t)
-     p[i].y = p[i].y + cos(t)
-     p[i].z = p[i].z + 3 + sin(t)
+     p[i].z=p[i].z + 3--1.5
     end
-    
+   
     -- get perspective
     local cords={
      p[1]:multiplyMatrix(self.projectionMath),
      p[2]:multiplyMatrix(self.projectionMath),
-     p[3]:multiplyMatrix(self.projectionMath)
+     p[3]:multiplyMatrix(self.projectionMath),
     }
     
+    -- center
     for i=1,3 do
      cords[i].x = (cords[i].x+ 1) * 0.5 * self.width  
      cords[i].y = (cords[i].y+ 1) * 0.5 * self.height
     end
     
     
-    g.line( cords[1].x,cords[1].y, cords[2].x,cords[2].y )
-    g.line( cords[2].x,cords[2].y, cords[3].x,cords[3].y )
-    g.line( cords[3].x,cords[3].y, cords[1].x,cords[1].y )
+    --[[ drawpoints
+    for i=1,3 do
+     g.circle("fill", cords[i].x,cords[i].y,4)
+    end
+    --]]
+    
+    -- [[ drawlines
+    for i=1,3 do
+     g.line( cords[i].x,cords[i].y, cords[i%3+1].x,cords[i%3+1].y )
+    end
+    --]]
     
    end
    

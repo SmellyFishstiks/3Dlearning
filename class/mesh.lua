@@ -3,12 +3,13 @@ local mesh={}
 mesh.__index = mesh
 
 -- new tri
-function mesh.new(name,tris,addToWorld)
+function mesh.new(name, tris, position, addToWorld)
  local t=
   {
    tris=tris or {},
+   name=name or "untitled mesh",
    
-   name=name or "untitled mesh"
+   position=position or { x=0, y=0, z=0, w=0, v=0 }
  }
  if addToWorld then
   world.objects[#world.objects+1]=t

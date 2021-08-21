@@ -1,8 +1,8 @@
 -- config file
 
-version = "0.1.3"
+version = "0.1.4"
 resolution=1
-size=640
+size=640/resolution
 
 function love.conf(t)
  

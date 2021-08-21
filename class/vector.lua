@@ -3,13 +3,14 @@ local vector={}
 vector.__index = vector
 
 -- new vector
-function vector.new(name, x,y,z,w)
+function vector.new(name, x,y,z,w,v)
     return setmetatable(
      {
       x = x or 0,
       y = y or 0,
       z = z or 0,
       w = w or 0,
+      v = v or 0,
       name=name or "untitled vector"
     },vector
    )
@@ -53,11 +54,11 @@ function vector.multiplyMatrix(self,matrix)
   x=self.x*matrix[1].x + self.y*matrix[2].x + self.z*matrix[3].x + self.w*matrix[4].x,
   y=self.x*matrix[1].y + self.y*matrix[2].y + self.z*matrix[3].y + self.w*matrix[4].y,
   z=self.x*matrix[1].z + self.y*matrix[2].z + self.z*matrix[3].z + self.w*matrix[4].z,
+  
+  multiplyMatrix=self.multiplyMatrix
  }
+ 
  local w=self.x*matrix[1].w + self.y*matrix[2].w + self.z*matrix[3].w + matrix[4].w
- 
- 
- 
  if w~=0 then
   output.x=output.x/w
   output.y=output.y/w

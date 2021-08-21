@@ -4,7 +4,7 @@ cube.__index = cube
 
 -- new cube, points are predefined 0's and 1's.
 -- think of it as a unit cube.
-function cube.new(name)
+function cube.new(name, x, y, z, rx, rz)
     return setmetatable(
      {
       name=name or "untitled cube",
@@ -31,7 +31,18 @@ function cube.new(name)
         -- "bottom"
         tri.new( "BottomA", {1,0,1},{0,0,1},{0,0,0} ),
         tri.new( "BottomB", {1,0,1},{0,0,0},{1,0,0} )
-       },true)
+       },
+       -- position
+       {
+        x=x or 0,
+        y=y or 0,
+        z=z or 0,
+        -- rotational values
+        rx=rx or 0,
+        rz=rz or 0
+       },
+       
+       true)
     },cube
    )
 end
