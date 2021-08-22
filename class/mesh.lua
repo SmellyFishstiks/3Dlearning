@@ -9,7 +9,7 @@ function mesh.new(name, tris, position, addToWorld)
    tris=tris or {},
    name=name or "untitled mesh",
    
-   position=position or { x=0, y=0, z=0, w=0, v=0 }
+   position=position or { x=0, y=0, z=0, rx=0, rz=0 }
  }
  if addToWorld then
   world.objects[#world.objects+1]=t

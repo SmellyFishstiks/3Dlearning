@@ -14,6 +14,14 @@ function love.load()
  
  floor = m.floor
  ceil = m.ceil
+ abs = m.abs
+function sign(n)
+ if n<0 then
+  return -1
+ end
+ 
+ return 1
+end
  tan = m.tan
  sin = m.sin
  cos = m.cos
@@ -21,9 +29,9 @@ function love.load()
  
  g.setDefaultFilter("nearest","nearest")
  g.setLineStyle("rough")
- g.setLineWidth(1)
+ g.setLineWidth(2)
  
- screen = g.newCanvas( ceil(g.getWidth()/resolution), ceil(g.getHeight()/resolution) )
+ screen = g.newCanvas( ceil(g.getWidth()/resolution.x), ceil(g.getHeight()/resolution.y) )
  
  -- time
  time=0
@@ -36,7 +44,10 @@ function love.load()
  mesh = require("class/mesh")
  world = require("class/world")
  camera = require("class/camera")
- require("class/shape")
+ 
+ 
+ require("code/file/read")
+ require("code/file/shape")
  
  
  require("code/transformations")
@@ -44,7 +55,12 @@ function love.load()
  -- initalize testing
  require("code/playground")
  
-
+ 
+ outlineShader = love.graphics.newShader( love.filesystem.newFileData("outline.glsl") )
+ 
+ outlineShader:send("col",{0,0,0,1})
+ outlineShader:send("scale",{1/testCamera.width,1/testCamera.height})
+ outlineShader:send("thicness",1)
 end
 
 function love.update()
@@ -62,16 +78,19 @@ function love.draw()
  
  -- draw data to the screen canvas here
  g.setCanvas(screen)
+  --g.clear(0.332, 0.871, 0.496)
   g.clear(1,1,1)
   
   -- insert drawing here
+  love.graphics.setShader(outlineShader)
   testCamera:draw()
+  love.graphics.setShader()
   
  g.setCanvas()
  
  
  -- draw canvas data to screen
- g.scale(resolution,resolution)
+ g.scale(resolution.x,resolution.y)
   g.draw(screen)
  g.origin()
  
