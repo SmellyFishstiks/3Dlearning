@@ -1,2 +1,2 @@
 -- require primitve shapes here
-cube = require("model/cube")
+cube = createNewMeshType("cube")

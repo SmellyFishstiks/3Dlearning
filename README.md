@@ -41,3 +41,6 @@ Grabs Normals of the faces, culls stuff not needed to be drawn using that, uses 
 Saves tris to draw, sorts by z, then draws them with polygon to fill and threw in the outline shader because I love it.
 
 Currently in the process of reorganizing some stuff and model files..
+
+#v0.2.1
+Reorganized the stuff and now I made a reader for my mdl format to read models!

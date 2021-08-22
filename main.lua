@@ -46,6 +46,7 @@ end
  camera = require("class/camera")
  
  
+ require("code/file/new")
  require("code/file/read")
  require("code/file/shape")
  

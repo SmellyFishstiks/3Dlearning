@@ -260,7 +260,10 @@ function camera.render(self)
    
    
    
-   -- [[ drawpoints
+   
+   --[[ drawpoints
+   local l=floor(lightDotProduct*3.3)/3
+   g.setColor(l,l,l)
    for i=1,3 do
     g.circle("fill", cords[i].x,cords[i].y,4)
    end
@@ -268,14 +271,14 @@ function camera.render(self)
    
    
    
-   -- [[ drawlines
+   --[[ drawlines
    g.setColor(0,0,0)
    for i=1,3 do
     g.line( cords[i].x,cords[i].y, cords[i%3+1].x,cords[i%3+1].y )
    end
    --]]
    
-   -- [[ polygon fill
+   -- [[ polygon fills
    local l=floor(lightDotProduct*3.3)/3
    g.setColor(l,l,l)
    g.polygon("fill", cords[1].x,cords[1].y, cords[2].x,cords[2].y, cords[3].x,cords[3].y)
