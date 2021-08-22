@@ -29,3 +29,6 @@ And shortcuts for making my life easier. lots of progress!
 Screen resolution fixes, Cleaned rendering and now vectors are 5D, fixed rotating(?),
 
 Editing meshses is now moved to outside of rendering to make life way nicer.
+
+# v0.1.5
+Fixed rotation bug with editing x,y tri poses instead of the mesh position, and also fixed RZ projection matrix issue.

@@ -1,9 +1,8 @@
 
 
-cube.new( "Test Cube1",0, 0, 0,  0, 0 )
-cube.new( "Test Cube2",1, -1,4,  0, 0 )
-cube.new( "Test Cube3",-1,0, 2,  0, 0 )
-
+for i=-1,1 do
+ cube.new( "Test Cube "..i,i*1.75, 0, 0,  i*2.0944, 0 )
+end
 testCamera = camera.new( "test",
  ceil(g.getWidth()/resolution),
  ceil(g.getHeight()/resolution), 90 )
@@ -18,16 +17,15 @@ function movementTest()
   for i=1,#meshToDraw.tris do
    local tri = meshToDraw.tris[i]
    for i=1,3 do
-    
     local p=tri.points[i]
+    
+    if love.keyboard.isDown("space") then
     -- [[
-    for i=1,3 do
-     p.x = p.x + cos(t)/100
-     p.y = p.y + cos(t/2)/200
-     p.v = p.v + 0.01
-     p.w = p.w + 0.02
-    end
+    meshToDraw.position.x = meshToDraw.position.x + cos(t)/1500
+     p.v = p.v + 0.0075
+     p.w = p.w + 0.0075
     --]]
+    end
    end
   end
  end

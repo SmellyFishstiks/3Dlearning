@@ -1,6 +1,6 @@
 -- config file
 
-version = "0.1.4"
+version = "0.1.5"
 resolution=1
 size=640/resolution
 
@@ -13,5 +13,5 @@ function love.conf(t)
  t.window.height=size*resolution
  
  t.version = "11.4"
- t.window.highdpi = false
+ t.window.highdpi = true
 end

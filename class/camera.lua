@@ -99,9 +99,16 @@ function camera.render(self)
     end
     local p=copy
     
-    -- [[ rotation
+    -- centering
+    for i=1,3 do
+     p[i].x = p[i].x - 0.5
+     p[i].y = p[i].y - 0.5
+    end
+    
+    --[ [ rotation
     for i=1,3 do
      updateTransformations( p[i].w,p[i].v )
+     
      
      local triRotatedX = p[i]:multiplyMatrix( transformationTable.rotatations.x )
      
@@ -113,11 +120,17 @@ function camera.render(self)
      
      
      if p[i].v~=0 then
-      local triRotatedXZ = p[i]:multiplyMatrix( transformationTable.rotatations.z )
+      local Pdummy={
+       x=p[i].x, y=p[i].y, z=p[i].z,
+       w=p[i].w, v=p[i].v,
+       multiplyMatrix=p[i].multiplyMatrix
+      }
       
-      p[i].x = triRotatedXZ.x
-      p[i].y = triRotatedXZ.y
-      p[i].z = triRotatedXZ.z
+      local triRotatedZ = Pdummy:multiplyMatrix( transformationTable.rotatations.z )
+      
+      p[i].x = triRotatedZ.x
+      p[i].y = triRotatedZ.y
+      p[i].z = triRotatedZ.z
      end
     end
     --]]
@@ -137,6 +150,7 @@ function camera.render(self)
     for i=1,3 do
      p[i].z=p[i].z + 3--1.5
     end
+    
    
     -- get perspective
     local cords={
@@ -145,7 +159,7 @@ function camera.render(self)
      p[3]:multiplyMatrix(self.projectionMath),
     }
     
-    -- center
+    -- more centering
     for i=1,3 do
      cords[i].x = (cords[i].x+ 1) * 0.5 * self.width  
      cords[i].y = (cords[i].y+ 1) * 0.5 * self.height

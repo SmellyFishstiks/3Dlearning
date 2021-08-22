@@ -71,8 +71,8 @@ function love.draw()
  
  
  -- draw canvas data to screen
- g.scale(resolution)
+ g.scale(resolution,resolution)
   g.draw(screen)
- g.scale(1/resolution)
+ g.origin()
  
 end

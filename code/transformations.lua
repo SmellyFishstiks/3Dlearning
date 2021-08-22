@@ -15,7 +15,7 @@ function updateTransformations(rotx,rotz)
    x={
     vector.new("rotation",1,0,         0,        0 ),
     vector.new("rotation",0,cos(rotx), sin(rotx),0 ),
-    vector.new("rotation",0,-sin(rotx),0,        0 ),
+    vector.new("rotation",0,-sin(rotx),cos(rotx),0 ),
     vector.new("rotation",0,0,         0,        1 )
    },
    -- z
