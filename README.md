@@ -64,4 +64,4 @@ grasp the camera stuff but also I think I skipped over something to do with the 
 # v0.2.4
 Added pyramids, shoved all of the rendering code into it's own file to make it neater.
 
-Added "End" tag to file format, tweaked and fixed some lighting stuff
+Added "End" tag to file format, tweaked and fixed some lighting stuff, made it so windows resolution is better read.
