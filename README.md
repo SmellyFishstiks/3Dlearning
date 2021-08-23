@@ -50,5 +50,14 @@ Tris now have a flag table, this is to store future things but for now it's just
 
 Also in that vain played with the lighting more
 
+# v0.2.3
+debug lines are handled better and played with lighting a bit.
 
+Major rework to how I store and use the camera matrix, the rotating matrixes (finally added the 3rd y one
+and swaped x and y around because it felt better that way.)
+
+cameras are now editable after making them.
+
+need to watch video 2 and 3 more to
+grasp the camera stuff but also I think I skipped over something to do with the lighting :o
 

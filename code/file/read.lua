@@ -14,7 +14,7 @@ function readModelData(fileName)
  
  -- reader
  local state=0
- local stateTable={ ',', '"', '#', '[', ']', ':', ';', '{', '}' }
+ local stateTable={ ',', '"', '#', '[', ']', ':', ';', '{' }
  local i=0
  for k=1,#raw do
   i=i+1
@@ -103,12 +103,44 @@ function readModelData(fileName)
   end
   
   if state==7 then
-   --print("wip special properties init (EX: UV, etc.)")
-  end
-  
-  if state==8 then
-   --print("wip special properties close (EX: UV, etc.)")
-   i=i+1
+   if string.sub(raw,i,i+1)=="{}" then
+    state=0
+   else
+    
+    local items={}
+    local k,v=false,false
+    
+    local j=i+1
+    while i<giveUp and string.sub(raw,i,i)~="}" do
+     
+     while not k do
+      if string.sub(raw,i,i)=="=" then
+       k = string.sub(raw,j,i-1)
+       break
+      end
+      i=i+1
+     end
+     
+     j=i+1
+     while not v do
+      if string.sub(raw,i,i)==";" then
+       v = string.sub(raw,j,i-1)
+       if v=="true" then items[k]=true end
+       break
+      end
+      i=i+1
+     end
+     
+     i=i+1
+    end
+    
+    
+    for k,v in pairs(items) do
+     flags[k]=v
+    end
+    
+    state=0
+   end
   end
   
   

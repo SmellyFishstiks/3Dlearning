@@ -7,7 +7,6 @@
 
 function love.load()
  
- 
  -- set defualt things here, like screen and shortcuts etc.
  g=love.graphics
  m=math
@@ -15,13 +14,8 @@ function love.load()
  floor = m.floor
  ceil = m.ceil
  abs = m.abs
-function sign(n)
- if n<0 then
-  return -1
- end
- 
- return 1
-end
+ min = m.min
+ max = m.max
  tan = m.tan
  sin = m.sin
  cos = m.cos
@@ -40,6 +34,7 @@ end
  -- (make this cleaner maybe later.)
  
  vector = require("class/vector")
+ vector.projection = require("class/vectorprojection")
  tri = require("class/tri")
  mesh = require("class/mesh")
  world = require("class/world")
@@ -50,8 +45,6 @@ end
  require("code/file/read")
  require("code/file/shape")
  
- 
- require("code/transformations")
  
  -- initalize testing
  require("code/playground")
@@ -76,10 +69,8 @@ end
 
 
 function love.draw()
- 
  -- draw data to the screen canvas here
  g.setCanvas(screen)
-  --g.clear(0.332, 0.871, 0.496)
   g.clear(1,1,1)
   
   -- insert drawing here

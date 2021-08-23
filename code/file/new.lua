@@ -1,5 +1,4 @@
-
-
+-- create a whole new model/meshtype to call and use
 function createNewMeshType(fileName)
  
  
@@ -7,7 +6,7 @@ function createNewMeshType(fileName)
  newMesh.__index = newMesh
 
  
- function newMesh.new(name, x, y, z, rx, rz)
+ function newMesh.new(name, x, y, z, rx, ry, rz)
   return setmetatable(
    {
     name=newMesh or "untitled "..fileName,
@@ -21,6 +20,7 @@ function createNewMeshType(fileName)
       z=z or 0,
       -- rotational values
       rx=rx or 0,
+      ry=ry or 0,
       rz=rz or 0
      },
      

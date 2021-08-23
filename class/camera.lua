@@ -11,7 +11,6 @@ function camera.new( name, width, height, FOV, position )
     height = height or ceil( g.getHeight()/resolution)
     
     FOV = FOV or 90
-    local r = 1/tan(FOV*0.5 / 180 * π)
     local far = 1000
     local near= 0.1
     
@@ -23,10 +22,9 @@ function camera.new( name, width, height, FOV, position )
       height=height,
       screen=g.newCanvas(width,height),
       
-      FieldNear=near,
-      FieldFar=far,
+      near=near,
+      far=far,
       FOV=FOV,
-      FOVRad=r,
       
       ratio=width/height,
       
@@ -35,19 +33,10 @@ function camera.new( name, width, height, FOV, position )
        y=0,
        z=0,
        rx=0,
+       ry=0,
        rz=0
       },
       
-      
-      -- unlike other transformations this is dependent on the camera.
-      projectionMath={
-       vector.new("CameraProjection", (width/height)*r, nil, nil,                    nil),
-       vector.new("CameraProjection", nil,              r,   nil,                    nil),
-       vector.new("CameraProjection", nil,              nil, far/(far-near),         1  ),
-       vector.new("CameraProjection", nil,              nil, (-far*near)/(far-near), 0  )
-      },
-      -- remember to add camera angles like yaw, pitch, etc or whatever the
-      -- naming will be
       
       name=name or "untitled camera"
     },camera
@@ -84,7 +73,16 @@ function camera.render(self)
   g.clear()
   
   
-  g.setColor(0,0,0)
+  --[[ matWorld? maybe remove? or wait watch the vid, WIP!!!!!!!!!
+  local matRotateX = vector.projection.rotateX(time/1000)
+  local matRotateZ = vector.projection.rotateZ(time/2000)
+  local matTranslate = vector.projection.translate(0, 0, 6 )
+  
+  local matWorld = vector.new("'world' matrix vector",1,1,1,1)
+  matWorld:multiplyMatrix(matRotateX)
+  matWorld:multiplyMatrix(matRotateZ)
+  matWorld:multiplyMatrix(matTranslate)
+  --]]
   
   for i=1,#world.objects do
    
@@ -104,10 +102,6 @@ function camera.render(self)
      for k,v in pairs(v) do
       copy[i][k]=v
      end
-     
-     -- pass the points the general rotation of the mesh
-     copy[i].w = copy[i].w + meshToDraw.position.rx
-     copy[i].v = copy[i].v + meshToDraw.position.rz
     end
     local p=copy
     
@@ -117,28 +111,36 @@ function camera.render(self)
      p[i].y = p[i].y - 0.5
     end
     
+    
+    --[[ world offset? maybe remove? or wait watch the vid, WIP!!!!!!!!!
+     for i=1,3 do
+      
+     end
+    --]]
+    
+    
     -- [[ rotation
     for i=1,3 do
-     updateTransformations( p[i].w,p[i].v )
      
-     
-     local triRotatedX = p[i]:multiplyMatrix( transformationTable.rotatations.x )
-     
-     if p[i].w~=0 then
+     if meshToDraw.position.rx~=0 then
+      local triRotatedX = p[i]:multiplyMatrix( vector.projection.rotateX(meshToDraw.position.rx) )
       p[i].x = triRotatedX.x
       p[i].y = triRotatedX.y
       p[i].z = triRotatedX.z
      end
      
      
-     if p[i].v~=0 then
-      local Pdummy={
-       x=p[i].x, y=p[i].y, z=p[i].z,
-       w=p[i].w, v=p[i].v,
-       multiplyMatrix=p[i].multiplyMatrix
-      }
+     if meshToDraw.position.ry~=0 then
+      local triRotatedY = p[i]:multiplyMatrix( vector.projection.rotateY(meshToDraw.position.ry) )
       
-      local triRotatedZ = Pdummy:multiplyMatrix( transformationTable.rotatations.z )
+      p[i].x = triRotatedY.x
+      p[i].y = triRotatedY.y
+      p[i].z = triRotatedY.z
+     end
+     
+     
+     if meshToDraw.position.rz~=0 then
+      local triRotatedZ = p[i]:multiplyMatrix( vector.projection.rotateZ(meshToDraw.position.rz) )
       
       p[i].x = triRotatedZ.x
       p[i].y = triRotatedZ.y
@@ -151,21 +153,12 @@ function camera.render(self)
     for i,v in ipairs(tri.points) do
      for k,v in pairs(v) do
       
-      if k~="name" and k~="w" and k~="v" then
+      if k~="name" and k~="w" then
        p[i][k]=p[i][k]+meshToDraw.position[k]
       end
       
      end
     end
-    
-    
-    
-    
-    -- push stuff away from the camera a bit (wip?)
-    for i=1,3 do
-     p[i].z=p[i].z + 3
-    end
-    
     
     
     -- decide if this tri should be drawn or not
@@ -189,26 +182,14 @@ function camera.render(self)
     --if normal.z<=0 then
     if normal.x * p[1].x - self.position.x +
        normal.y * p[1].y - self.position.y +
-       normal.z * p[1].z - self.position.z <0 then
-     
-     
-     -- get lighting for face
-     local lightDirc = vector.new("light", 0,0,-1)
-     local l = (lightDirc.x^2+lightDirc.y^2+lightDirc.z^2)^0.5
-     for k,v in pairs(lightDirc) do
-      if k~="name" then
-       lightDirc[k]=v/l
-      end
-     end
-     
-     local lightDotProduct = normal.x * lightDirc.x + normal.y * lightDirc.y + normal.z * lightDirc.z
+       normal.z * p[1].z - self.position.z <0 or tri.flags.doubleSided then
      
      
      -- get perspective
      local cords={
-      p[1]:multiplyMatrix(self.projectionMath),
-      p[2]:multiplyMatrix(self.projectionMath),
-      p[3]:multiplyMatrix(self.projectionMath),
+      p[1]:multiplyMatrix( vector.projection.CameraProjection(self) ),
+      p[2]:multiplyMatrix( vector.projection.CameraProjection(self) ),
+      p[3]:multiplyMatrix( vector.projection.CameraProjection(self) ),
      }
      
      -- more centering
@@ -219,7 +200,7 @@ function camera.render(self)
      
      
      -- take these coordinates to draw at and just dump them for the final part.
-     FinalTris[#FinalTris+1]={cords,meshToDraw,lightDotProduct,tri.flags}
+     FinalTris[#FinalTris+1]={cords,meshToDraw,normal,tri.flags}
      
      
     end
@@ -230,14 +211,18 @@ function camera.render(self)
   end
   
   
+  
+  
+  
+  
   -- sort it out
   while true do
    
    flag=true
    
    for i=1,#FinalTris-1 do
-    local z1=FinalTris[i][1][1].z+FinalTris[i][2].position.z
-    local z2=FinalTris[i+1][1][1].z+FinalTris[i+1][2].position.z
+    local z1=FinalTris[i][1][1].z   + FinalTris[i][2].position.z
+    local z2=FinalTris[i+1][1][1].z + FinalTris[i+1][2].position.z
     
     if z1 < z2 then
      local dummy=FinalTris[i]
@@ -253,35 +238,50 @@ function camera.render(self)
   end
   
   
+  
+  
+  
+  
   -- draw it out
   for i=1,#FinalTris do
    local cords=FinalTris[i][1]
-   local lightDotProduct=FinalTris[i][3]
+   local normal=FinalTris[i][3]
    local flags=FinalTris[i][4]
    
+   -- get lighting for faces
+   -- maybe replace lightDirc later.
+   local lightDirc = vector.new("light", 0,-3,-1)
+   
+   
+   local l = (lightDirc.x^2+lightDirc.y^2+lightDirc.z^2)^0.5
+   lightDirc:divide(l)
+   
+   local lightDotProduct = vector.dotProduct(lightDirc,normal)
+   local lightDetail=12 --3
+   
+   
+   -- grab color and light info
+   local red,green,blue = flags.color[1], flags.color[2], flags.color[3]
+   local l=floor(lightDotProduct*lightDetail + 0.5)/lightDetail-1
    
    
    --[[ drawpoints
-   local l=floor(lightDotProduct*3.3)/3
-   g.setColor(l,l,l)
+   g.setColor( red+l, green+l, blue+l  )
    for i=1,3 do
-    g.circle("fill", cords[i].x,cords[i].y,4)
+    g.circle("fill", cords[i].x,cords[i].y,3)
    end
    --]]
    
    
-   
    --[[ drawlines
-   g.setColor(0,0,0)
+   local y=1 if -l<=0.5 then y=0 end
+   g.setColor(y,y,y)
    for i=1,3 do
     g.line( cords[i].x,cords[i].y, cords[i%3+1].x,cords[i%3+1].y )
    end
    --]]
    
    -- [[ polygon fills
-   local lightDetail=3
-   local red,green,blue = flags.color[1], flags.color[2], flags.color[3]
-   local l=floor(lightDotProduct*lightDetail + 0.5)/lightDetail-1
    g.setColor( red+l, green+l, blue+l  )
    
    g.polygon("fill", cords[1].x,cords[1].y, cords[2].x,cords[2].y, cords[3].x,cords[3].y)
