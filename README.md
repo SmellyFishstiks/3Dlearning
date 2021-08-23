@@ -61,3 +61,7 @@ cameras are now editable after making them.
 need to watch video 2 and 3 more to
 grasp the camera stuff but also I think I skipped over something to do with the lighting :o
 
+# v0.2.4
+Added pyramids, shoved all of the rendering code into it's own file to make it neater.
+
+Added "End" tag to file format, tweaked and fixed some lighting stuff

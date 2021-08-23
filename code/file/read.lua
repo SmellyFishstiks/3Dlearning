@@ -144,6 +144,9 @@ function readModelData(fileName)
   end
   
   
+  if string.sub(raw,i,i+2)=="End" then return tris end
+  
+  
   if i>#raw then break end
   
  end

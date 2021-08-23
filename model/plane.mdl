@@ -1,4 +1,5 @@
 "plane",
-#ffffff,
+#ffd0d0,
 [ :1;0;1; :0;0;1; :0;0;0; {doubleSided=true;} ],
 [ :1;0;1; :0;0;0; :1;0;0; {doubleSided=true;} ],
+End

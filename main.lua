@@ -35,11 +35,13 @@ function love.load()
  
  vector = require("class/vector")
  vector.projection = require("class/vectorprojection")
+ 
  tri = require("class/tri")
  mesh = require("class/mesh")
  world = require("class/world")
- camera = require("class/camera")
  
+ camera = require("class/camera")
+ camera.render = require("code/render")
  
  require("code/file/new")
  require("code/file/read")
@@ -53,8 +55,8 @@ function love.load()
  outlineShader = love.graphics.newShader( love.filesystem.newFileData("outline.glsl") )
  
  outlineShader:send("col",{0,0,0,1})
- outlineShader:send("scale",{1/testCamera.width,1/testCamera.height})
- outlineShader:send("thicness",1)
+ outlineShader:send("scale",{ 1/(testCamera.width*resolution.x), 1/(testCamera.height*resolution.y) })
+ outlineShader:send("thicness",2)
 end
 
 function love.update()
