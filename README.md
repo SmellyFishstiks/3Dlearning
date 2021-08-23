@@ -42,5 +42,13 @@ Saves tris to draw, sorts by z, then draws them with polygon to fill and threw i
 
 Currently in the process of reorganizing some stuff and model files..
 
-#v0.2.1
+# v0.2.1
 Reorganized the stuff and now I made a reader for my mdl format to read models!
+
+# v0.2.2
+Tris now have a flag table, this is to store future things but for now it's just for colors that each tri can have,
+
+Also in that vain played with the lighting more
+
+
+

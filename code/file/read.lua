@@ -5,7 +5,8 @@ function readModelData(fileName)
  local raw = love.filesystem.read("model/"..fileName..".mdl")
  
  
- local name,color,tris = "","ffffff",{}
+ local name,tris = "",{}
+ local flags = {color={1,1,1}}
  local triBuilding = false
  local vectorBuilding = false
  
@@ -39,8 +40,12 @@ function readModelData(fileName)
   
   -- color
   if state==2 then
+   local data=string.sub(raw,i+1,i+6)
    
-   color=string.sub(raw,i+1,i+6)
+   local c = { tonumber("0x"..string.sub(data,1,2))/255, tonumber("0x"..string.sub(data,3,4))/255, tonumber("0x"..string.sub(data,5,6))/255 }
+   flags.color = c
+   
+   
    i=i+6
   end
   
@@ -53,7 +58,12 @@ function readModelData(fileName)
   if state==4 then
    
    assert(triBuilding,"closed a tri intializer when there wasn't one.")
-   tris[#tris+1]=tri.new("file "..name.."'s' tri", triBuilding[1],triBuilding[2],triBuilding[3])
+   
+   
+   local t={}
+   for k,v in pairs(flags) do t[k]=v end
+   
+   tris[#tris+1]=tri.new("file "..name.."'s' tri", triBuilding[1], triBuilding[2], triBuilding[3], t  )
    --[[
    for i=1,3 do
     print(

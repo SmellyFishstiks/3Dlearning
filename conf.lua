@@ -1,6 +1,6 @@
 -- config file
 
-version = "0.2.1"
+version = "0.2.2"
 
 -- window dimension stuff
 local r, xr,yr = 1, 1, 1

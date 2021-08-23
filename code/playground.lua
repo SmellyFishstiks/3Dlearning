@@ -1,6 +1,7 @@
 
 
-cube.new( "Test",0, 0, 0,  0, 2 )
+--donut.new( "Test",1.25, 0, 0,  0, 0 )
+cube.new( "Test",0, 0, 0,  0, 0 )
 
 testCamera = camera.new( "test",
  ceil(g.getWidth()/resolution.x),
@@ -20,7 +21,9 @@ function movementTest()
    local tri = meshToDraw.tris[i]
    for i=1,3 do
     local p=tri.points[i]
-    p.w=p.w+0.05
+    
+    
+    
    end
   end
  end

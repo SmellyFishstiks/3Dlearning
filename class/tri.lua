@@ -3,7 +3,7 @@ local tri={}
 tri.__index = tri
 
 -- new tri
-function tri.new(name, one,two,three)
+function tri.new(name, one,two,three, flags)
     one = one or {0,0,0}
     two = two or {0,0,0}
     three = three or {0,0,0}
@@ -16,7 +16,9 @@ function tri.new(name, one,two,three)
        vector.new( "tri point3", three[1], three[2], three[3] )
       },
       
-      name=name or "untitled tri"
+      flags=flags or {},
+      
+      name=name or "untitled tri",
     },tri
    )
 end

@@ -219,7 +219,7 @@ function camera.render(self)
      
      
      -- take these coordinates to draw at and just dump them for the final part.
-     FinalTris[#FinalTris+1]={cords,meshToDraw,lightDotProduct}
+     FinalTris[#FinalTris+1]={cords,meshToDraw,lightDotProduct,tri.flags}
      
      
     end
@@ -257,7 +257,7 @@ function camera.render(self)
   for i=1,#FinalTris do
    local cords=FinalTris[i][1]
    local lightDotProduct=FinalTris[i][3]
-   
+   local flags=FinalTris[i][4]
    
    
    
@@ -279,8 +279,11 @@ function camera.render(self)
    --]]
    
    -- [[ polygon fills
-   local l=floor(lightDotProduct*3.3)/3
-   g.setColor(l,l,l)
+   local lightDetail=3
+   local red,green,blue = flags.color[1], flags.color[2], flags.color[3]
+   local l=floor(lightDotProduct*lightDetail + 0.5)/lightDetail-1
+   g.setColor( red+l, green+l, blue+l  )
+   
    g.polygon("fill", cords[1].x,cords[1].y, cords[2].x,cords[2].y, cords[3].x,cords[3].y)
    --]]
    
