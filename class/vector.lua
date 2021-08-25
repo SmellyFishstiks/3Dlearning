@@ -33,41 +33,25 @@ end
 
 -- add
 function vector.add(self,vec)
- self.x=self.x+(vec.x or 0)
- self.y=self.y+(vec.y or 0)
- self.z=self.z+(vec.z or 0)
- self.w=self.w+(vec.w or 0)
- return self
+ return {x=self.x+vec.x, y=self.y+vec.y, z=self.z+vec.z, w=0}
 end
 
 
 -- subtract
 function vector.subtract(self,vec)
- self.x=self.x-(vec.x or 0)
- self.y=self.y-(vec.y or 0)
- self.z=self.z-(vec.z or 0)
- self.w=self.w-(vec.w or 0)
- return self
+ return {x=self.x-vec.x, y=self.y-vec.y, z=self.z-vec.z, w=0}
 end
 
 
 -- multiply
-function vector.multiply(self,scale)
- self.x=self.x*scale
- self.y=self.y*scale
- self.z=self.z*scale
- self.w=self.w*scale
- return self
+function vector.multiply(self,v)
+ return {x=self.x*v, y=self.y*v, z=self.z*v, w=0}
 end
 
 
 -- multiply
-function vector.divide(self,scale)
- self.x=self.x/scale
- self.y=self.y/scale
- self.z=self.z/scale
- self.w=self.w/scale
- return self
+function vector.divide(self,v)
+ return {x=self.x/v, y=self.y/v, z=self.z/v, w=0}
 end
 
 
@@ -86,21 +70,32 @@ end
 -- normalize vector
 function vector.noramlize(self)
  local length=self.length(self,self)
- return self:divide(length)
+ if length~=0 then
+  return self:divide(length)
+ else
+  return self
+ end
 end
 
 
+-- find cross product
+function vector.crossProduct(self,vec) 
+ return vector.new(
+  "crossProduct vector",
+  self.y*vec.z - self.z*vec.y,
+  self.z*vec.x - self.x*vec.z,
+  self.x*vec.y - self.y*vec.x,
+  1)
+end
 
 
 -- return multipling a matrix
 function vector.multiplyMatrix(self,matrix)
- 
  local output= {
   x=self.x*matrix[1].x + self.y*matrix[2].x + self.z*matrix[3].x + self.w*matrix[4].x,
   y=self.x*matrix[1].y + self.y*matrix[2].y + self.z*matrix[3].y + self.w*matrix[4].y,
   z=self.x*matrix[1].z + self.y*matrix[2].z + self.z*matrix[3].z + self.w*matrix[4].z,
   w=self.x*matrix[1].w + self.y*matrix[2].w + self.z*matrix[3].w + matrix[4].w,
-  multiplyMatrix=self.multiplyMatrix
  }
  
  if output.w~=0 then
@@ -109,10 +104,27 @@ function vector.multiplyMatrix(self,matrix)
   output.z=output.z/output.w
  end
  
- return output
+ for k,v in pairs(output) do
+  self[k]=v
+ end
+ 
+ return self
 end
 
 
+function vector.quickInverse(matrix)
+ return {
+  vector.new( matrix[1].x, matrix[2].x, matrix[3].x, 0 ),
+  vector.new( matrix[1].y, matrix[2].y, matrix[3].y, 0 ),
+  vector.new( matrix[1].z, matrix[2].z, matrix[3].z, 0 ),
+  vector.new(
+   -( matrix[4].x*matrix[1].x + matrix[4].y*matrix[2].x + matrix[4].z*matrix[3].x ),
+   -( matrix[4].x*matrix[1].y + matrix[4].y*matrix[2].y + matrix[4].z*matrix[2].y ),
+   -( matrix[4].x*matrix[1].z + matrix[4].y*matrix[3].z + matrix[4].z*matrix[3].z ),
+   1
+  ),
+ }
+end
 
 
 

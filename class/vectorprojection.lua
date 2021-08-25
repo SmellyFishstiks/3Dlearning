@@ -61,5 +61,55 @@ function projection.CameraProjection(camera)
 end
 
 
+-- find offset of a postion from the camera
+function projection.PointAt(pos, target, up)
+ 
+ -- get forward direction vector
+ local newForward = vector.new()
+ local result = vector.subtract(target, pos)
+ newForward.x, newForward.y, newForward.z = result.x, result.y, result.z
+ newForward = newForward:noramlize()
+ 
+ 
+ newForward.multiply=vector.multiply
+ -- get up direction vector
+ local a = newForward:multiply( vector.dotProduct(up, newForward) )
+ local newUp = vector.subtract(up, a)
+ 
+ -- wip
+ newUp.noramlize = vector.noramlize
+ newUp.length = vector.length
+ newUp.divide = vector.divide
+ 
+ newUp:noramlize()
+ 
+ -- get new right direction vector
+ local newRight = vector.crossProduct(newUp,newForward)
+ 
+ -- return matrix
+ return {
+  vector.new("pointAt", newRight.x,   newRight.y,   newRight.z,   0 ),
+  vector.new("pointAt", newUp.x,      newUp.y,      newUp.z,      0 ),
+  vector.new("pointAt", newForward.x, newForward.y, newForward.z, 0 ),
+  vector.new("pointAt", pos.x, pos.y, pos.z, 1 )
+ }
+ 
+end
+
+
+function projection.QuickInverse(matrix)
+ return {
+  vector.new( "inversed"..matrix[1].name, matrix[1].x, matrix[2].x, matrix[3].x, 0 ),
+  vector.new( "inversed"..matrix[2].name, matrix[1].y, matrix[2].y, matrix[3].y, 0 ),
+  vector.new( "inversed"..matrix[3].name, matrix[1].z, matrix[2].z, matrix[3].z, 0 ),
+  vector.new( "inversed"..matrix[4].name,
+  -(matrix[4].x * matrix[1].x + matrix[4].y * matrix[2].x + matrix[4].z * matrix[3].x ),
+  -(matrix[4].x * matrix[1].y + matrix[4].y * matrix[2].y + matrix[4].z * matrix[3].y ),
+  -(matrix[4].x * matrix[1].z + matrix[4].y * matrix[2].z + matrix[4].z * matrix[3].z ),
+  1)
+ }
+end
+
+
 
 return projection

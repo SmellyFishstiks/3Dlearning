@@ -64,4 +64,10 @@ grasp the camera stuff but also I think I skipped over something to do with the 
 # v0.2.4
 Added pyramids, shoved all of the rendering code into it's own file to make it neater.
 
-Added "End" tag to file format, tweaked and fixed some lighting stuff
+Added "End" tag to file format, tweaked and fixed some lighting stuff, made it so windows resolution is better read.
+
+# v0.2.5
+Cleaned up rotations, changed how vector.multiplyMatrix works a bit and other vector things, added debug display, 
+
+decided to not redo all of the rendering stuff and instead just added the  whole camera movement on top and it worked! well.. it needs work but it works.
+So happy ^-^

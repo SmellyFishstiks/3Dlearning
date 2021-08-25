@@ -10,17 +10,8 @@ return function(self)
   g.clear()
   
   
-  --[[ matWorld? maybe remove? or wait watch the vid, WIP!!!!!!!!!
-  local matRotateX = vector.projection.rotateX(time/1000)
-  local matRotateZ = vector.projection.rotateZ(time/2000)
-  local matTranslate = vector.projection.translate(0, 0, 6 )
   
-  local matWorld = vector.new("'world' matrix vector",1,1,1,1)
-  matWorld:multiplyMatrix(matRotateX)
-  matWorld:multiplyMatrix(matRotateZ)
-  matWorld:multiplyMatrix(matTranslate)
-  --]]
-  
+  -- for all things in world do
   for i=1,#world.objects do
    
    
@@ -49,43 +40,30 @@ return function(self)
     end
     
     
-    --[[ world offset? maybe remove? or wait watch the vid, WIP!!!!!!!!!
-     for i=1,3 do
-      
-     end
+    
+    
+    -- insert the matrix draw stuff here
+    --local worldMatrix = {vector.new(),vector.new(),vector.new(),vector.new()}
+    --worldMatrix = 
+    --error("inesert the stuff here with the translated and rotations.. you could do it really with just the current data! but ya this is rediculous we need to rewatch ep3 more and focus on that. just hammer through and don't worry about following too close and we'll get it! we got this.")
+    
+    
+    -- [[ do this next
+    local upVec = vector.new("up", 0,1,0)
+    local vTarget = vector.add( self.position, self.direction )
+    
+    local cameraMatrix = vector.projection.PointAt(self.position, vTarget, upVec)
+    local viewMatrix = vector.projection.QuickInverse(cameraMatrix)
+    
     --]]
     
     
-    -- [[ rotation
+
+    -- [[ rotation for each mesh
     for i=1,3 do
-     
-     
-     
-     
-     if meshToDraw.position.rx~=0 then
-      local triRotatedX = p[i]:multiplyMatrix( vector.projection.rotateX(meshToDraw.position.rx) )
-      p[i].x = triRotatedX.x
-      p[i].y = triRotatedX.y
-      p[i].z = triRotatedX.z
-     end
-     
-     
-     if meshToDraw.position.ry~=0 then
-      local triRotatedY = p[i]:multiplyMatrix( vector.projection.rotateY(meshToDraw.position.ry) )
-      
-      p[i].x = triRotatedY.x
-      p[i].y = triRotatedY.y
-      p[i].z = triRotatedY.z
-     end
-     
-     
-     if meshToDraw.position.rz~=0 then
-      local triRotatedZ = p[i]:multiplyMatrix( vector.projection.rotateZ(meshToDraw.position.rz) )
-      
-      p[i].x = triRotatedZ.x
-      p[i].y = triRotatedZ.y
-      p[i].z = triRotatedZ.z
-     end
+      p[i]:multiplyMatrix( vector.projection.rotateX(meshToDraw.position.rx) )
+      p[i]:multiplyMatrix( vector.projection.rotateY(meshToDraw.position.ry) )
+      p[i]:multiplyMatrix( vector.projection.rotateZ(meshToDraw.position.rz) )
     end
     --]]
     
@@ -101,6 +79,7 @@ return function(self)
     end
     
     
+
     -- decide if this tri should be drawn or not
     
     -- get normals
@@ -119,18 +98,27 @@ return function(self)
     
     
     -- if it's not obscured draw it and such
-    --if normal.z<=0 then
     if normal.x * p[1].x - self.position.x +
        normal.y * p[1].y - self.position.y +
        normal.z * p[1].z - self.position.z <0 or tri.flags.doubleSided then
      
      
+     -- [[ convert world space to screen space
+     
+     
+     for i=1,3 do
+      p[i] = p[i]:multiplyMatrix( viewMatrix )
+     end
+     --]]
+     
      -- get perspective
+     -- [[
      local cords={
       p[1]:multiplyMatrix( vector.projection.CameraProjection(self) ),
       p[2]:multiplyMatrix( vector.projection.CameraProjection(self) ),
       p[3]:multiplyMatrix( vector.projection.CameraProjection(self) ),
      }
+     --]]
      
      -- more centering
      for i=1,3 do
@@ -160,6 +148,7 @@ return function(self)
    
    flag=true
    
+   -- wip sorting stuff, once we have more complex shapes to test look at this further and make it work better.
    for i=1,#FinalTris-1 do
     local triCords1, triCords2 = FinalTris[i][1], FinalTris[i+1][1]
     local z1=(triCords1[1].z+--*FinalTris[i][2].position.z +
@@ -195,12 +184,11 @@ return function(self)
    
    -- get lighting for faces
    -- maybe replace lightDirc later.
-   local lightDirc = vector.new("light", 0,-3,-1)
+   local lightDirc = vector.new("light", -1,-3,-1)
    
    
    local l = (lightDirc.x^2+lightDirc.y^2+lightDirc.z^2)^0.5
-   lightDirc:divide(l)
-   
+   lightDirc = lightDirc:divide(l)
    
    local lightDotProduct = vector.dotProduct(lightDirc,normal)
    if flags.doubleSided then lightDotProduct=abs(lightDotProduct) end
@@ -214,7 +202,9 @@ return function(self)
    
    
    
-   --[[ drawlines
+   
+   
+   -- [[ drawlines
    local y=1 if -l<=0.5 then y=0 end
    g.setColor(y,y,y)
    for i=1,3 do
@@ -222,7 +212,7 @@ return function(self)
    end
    --]]
    
-   --[[ drawpoints
+   -- [[ drawpoints
    g.setColor( red+l, green+l, blue+l  )
    for i=1,3 do
     g.circle("fill", cords[i].x,cords[i].y,3)

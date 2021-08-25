@@ -28,15 +28,8 @@ function camera.new( name, width, height, FOV, position )
       
       ratio=width/height,
       
-      position= {
-       x=0,
-       y=0,
-       z=0,
-       rx=0,
-       ry=0,
-       rz=0
-      },
-      
+      position  = vector.new("camera "..name.."'s position vector",  0,0,0),
+      direction = vector.new("camera "..name.."'s direction vector", 0,0,1),
       
       name=name or "untitled camera"
     },camera

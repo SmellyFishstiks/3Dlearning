@@ -3,6 +3,9 @@
 -- by Smelly
 
 
+local wx,wy = love.window.getDesktopDimensions()
+local w,h = love.graphics.getDimensions()
+love.window.setMode(w, h, {x = wx/2 - (size.x*resolution.x)/2, y= 40} )
 
 
 function love.load()
@@ -21,14 +24,19 @@ function love.load()
  cos = m.cos
  π = m.pi
  
+ 
  g.setDefaultFilter("nearest","nearest")
  g.setLineStyle("rough")
  g.setLineWidth(2)
+ 
+ --g.setFontSize(2)
+ g.setFont(love.graphics.newFont("arial.ttf",80,"mono"))
  
  screen = g.newCanvas( ceil(g.getWidth()/resolution.x), ceil(g.getHeight()/resolution.y) )
  
  -- time
  time=0
+ 
  
  -- reqiure files here.
  -- (make this cleaner maybe later.)
@@ -42,6 +50,8 @@ function love.load()
  
  camera = require("class/camera")
  camera.render = require("code/render")
+ 
+ debugScreen = require("class/debug")
  
  require("code/file/new")
  require("code/file/read")
@@ -59,13 +69,22 @@ function love.load()
  outlineShader:send("thicness",2)
 end
 
-function love.update()
+function love.update(dt)
  time=time+1
  
  -- wip, but to show implimentation
  movementTest()
  
+ 
+ -- render screens
  testCamera:render()
+ 
+ 
+ 
+ local debugInfos={ "FPS: "..floor(dt*100) .."/".. love.timer.getFPS() }
+ testDebug:update(debugInfos)
+ testDebug:renderTo(testCamera.screen)
+ 
 end
 
 
@@ -76,9 +95,12 @@ function love.draw()
   g.clear(1,1,1)
   
   -- insert drawing here
-  love.graphics.setShader(outlineShader)
+  g.setShader(outlineShader)
   testCamera:draw()
-  love.graphics.setShader()
+  
+  
+  
+  g.setShader()
   
  g.setCanvas()
  
