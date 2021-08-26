@@ -16,13 +16,12 @@ end
 function debug.renderTo(self, screen)
  
  g.setCanvas(screen)
- g.scale( 1/resolution.x, 1/resolution.y )
-  
+  --g.scale(1/resolution.master)
   for i=1,#self.text do
    g.print( self.text[i],1,(i-1)*80 )
   end
   
- g.origin()
+ --g.origin()
  g.setCanvas()
 end
 

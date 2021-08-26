@@ -7,8 +7,9 @@ camera.__index = camera
 -- new tri
 function camera.new( name, width, height, FOV, position )
     -- get width/height or defualt width/height
-    width = width   or ceil( g.getWidth()/resolution )
-    height = height or ceil( g.getHeight()/resolution)
+    width = width   or ceil( g.getWidth())
+    height = height or ceil( g.getHeight())
+    
     
     FOV = FOV or 90
     local far = 1000
@@ -26,10 +27,13 @@ function camera.new( name, width, height, FOV, position )
       far=far,
       FOV=FOV,
       
-      ratio=width/height,
+      ratio=(width/(resolution.master*resolution.ogx^2) )/(height/resolution.master),
       
       position  = vector.new("camera "..name.."'s position vector",  0,0,0),
+      yaw = 0,
       direction = vector.new("camera "..name.."'s direction vector", 0,0,1),
+      
+      triMesh = love.graphics.newMesh({ {0,0}, {0,0}, {0,0} },"fan"),
       
       name=name or "untitled camera"
     },camera

@@ -48,10 +48,13 @@ return function(self)
     --error("inesert the stuff here with the translated and rotations.. you could do it really with just the current data! but ya this is rediculous we need to rewatch ep3 more and focus on that. just hammer through and don't worry about following too close and we'll get it! we got this.")
     
     
-    -- [[ do this next
+    -- [[ camera stuff
     local upVec = vector.new("up", 0,1,0)
-    local vTarget = vector.add( self.position, self.direction )
-    
+    local vTarget = vector.new("target",0,0,1)--vector.add( self.position, self.direction )
+    local cameraMatrixRotation = vector.projection.rotateY(self.yaw)
+    error("!\nwork on the camera stuff more, was ~ little less than 3min into video 3.\nreally tired and it sometimes feels like it's no proogress but we're getting there.. slowly.")
+    self.direction = vector.multiplyMatrix(cameraMatrixRotation,vTarget)
+   
     local cameraMatrix = vector.projection.PointAt(self.position, vTarget, upVec)
     local viewMatrix = vector.projection.QuickInverse(cameraMatrix)
     
@@ -97,15 +100,17 @@ return function(self)
     end
     
     
+     for i=1,3 do
+      p[i] = p[i]:multiplyMatrix( viewMatrix )
+     end
+    
     -- if it's not obscured draw it and such
-    if normal.x * p[1].x - self.position.x +
-       normal.y * p[1].y - self.position.y +
-       normal.z * p[1].z - self.position.z <0 or tri.flags.doubleSided then
+    if normal.x * p[1].x +
+       normal.y * p[1].y +
+       normal.z * p[1].z <0 or tri.flags.doubleSided then
      
      
-     -- [[ convert world space to screen space
-     
-     
+     --[[ convert world space to screen space
      for i=1,3 do
       p[i] = p[i]:multiplyMatrix( viewMatrix )
      end
@@ -179,6 +184,7 @@ return function(self)
   -- draw it out
   for i=1,#FinalTris do
    local cords=FinalTris[i][1]
+   local ogMesh=FinalTris[i][2]
    local normal=FinalTris[i][3]
    local flags=FinalTris[i][4]
    
@@ -193,7 +199,7 @@ return function(self)
    local lightDotProduct = vector.dotProduct(lightDirc,normal)
    if flags.doubleSided then lightDotProduct=abs(lightDotProduct) end
    
-   local lightDetail=12 -- 3
+   local lightDetail= 12-- 3
    
    -- grab color and light info
    local red,green,blue = flags.color[1], flags.color[2], flags.color[3]
@@ -204,7 +210,7 @@ return function(self)
    
    
    
-   -- [[ drawlines
+   --[[ drawlines
    local y=1 if -l<=0.5 then y=0 end
    g.setColor(y,y,y)
    for i=1,3 do
@@ -212,16 +218,41 @@ return function(self)
    end
    --]]
    
-   -- [[ drawpoints
+   --[[ drawpoints
    g.setColor( red+l, green+l, blue+l  )
    for i=1,3 do
     g.circle("fill", cords[i].x,cords[i].y,3)
    end
    --]]
    
-   -- [[ polygon fills
+   --[[ polygon fills
    g.setColor( red+l, green+l, blue+l  )
    g.polygon("fill", cords[1].x,cords[1].y, cords[2].x,cords[2].y, cords[3].x,cords[3].y)
+   --]]
+   
+   -- [[ mesh
+    
+    -- get z value
+    --[[
+    local mz = (cords[1].z+cords[2].z+cords[3].z)/3 + ogMesh.position.z
+    local d=mz/2-6 - self.position.z
+    ]]
+    local d=0
+    
+    if floor(d)<=#fillPatterns then
+     fillPatternShader:send("pattern", fillPatterns[min(max(floor(d),1),#fillPatterns)] )
+     g.setColor( red+l, green+l, blue+l  )
+     self.triMesh:setVertices({
+      {cords[1].x,cords[1].y},
+      {cords[2].x,cords[2].y},
+      {cords[3].x,cords[3].y}
+     })
+     
+     
+     g.setShader(fillPatternShader)
+     g.draw(self.triMesh)
+     g.setShader()
+    end
    --]]
    
    

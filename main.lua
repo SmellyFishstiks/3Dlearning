@@ -5,7 +5,7 @@
 
 local wx,wy = love.window.getDesktopDimensions()
 local w,h = love.graphics.getDimensions()
-love.window.setMode(w, h, {x = wx/2 - (size.x*resolution.x)/2, y= 40} )
+love.window.setMode(w, h, {x = wx/2 - (size.x*resolution.ogx)/2, y= 40} )
 
 
 function love.load()
@@ -32,7 +32,7 @@ function love.load()
  --g.setFontSize(2)
  g.setFont(love.graphics.newFont("arial.ttf",80,"mono"))
  
- screen = g.newCanvas( ceil(g.getWidth()/resolution.x), ceil(g.getHeight()/resolution.y) )
+ screen = g.newCanvas( ceil(g.getWidth()), ceil(g.getHeight()))
  
  -- time
  time=0
@@ -62,26 +62,44 @@ function love.load()
  require("code/playground")
  
  
- outlineShader = love.graphics.newShader( love.filesystem.newFileData("outline.glsl") )
- 
+ outlineShader = g.newShader( love.filesystem.newFileData("outline.glsl") ) 
  outlineShader:send("col",{0,0,0,1})
- outlineShader:send("scale",{ 1/(testCamera.width*resolution.x), 1/(testCamera.height*resolution.y) })
+ outlineShader:send("scale",{ 1/(testCamera.width), 1/(testCamera.height) })
  outlineShader:send("thicness",2)
+ 
+ 
+ 
+ fillPatternShader = g.newShader( love.filesystem.newFileData("fillpattern.glsl") )
+ fillPatterns={
+  g.newImage("assets/dist0.png"),
+  g.newImage("assets/dist1.png"),
+  g.newImage("assets/dist2.png"),
+  g.newImage("assets/dist3.png"),
+  g.newImage("assets/dist4.png"),
+  g.newImage("assets/dist5.png")
+ }
+ for i=1,#fillPatterns do
+  fillPatterns[i]:setWrap( "repeat", "repeat" )
+ end
+ 
 end
 
 function love.update(dt)
  time=time+1
- 
  -- wip, but to show implimentation
  movementTest()
- 
  
  -- render screens
  testCamera:render()
  
  
  
- local debugInfos={ "FPS: "..floor(dt*100) .."/".. love.timer.getFPS() }
+ local debugInfos={
+  "FPS: "..floor(dt*100) .."/".. love.timer.getFPS(),
+  "Camera:",
+  "xyz   ".. floor(testCamera.position.x*10)/10 .." "..floor(testCamera.position.y*10)/10 .." "..floor(testCamera.position.z*10)/10,
+  "yaw "..testCamera.yaw
+ }
  testDebug:update(debugInfos)
  testDebug:renderTo(testCamera.screen)
  
@@ -96,8 +114,9 @@ function love.draw()
   
   -- insert drawing here
   g.setShader(outlineShader)
+  g.scale(1/resolution.master)
   testCamera:draw()
-  
+  g.scale(resolution.master)
   
   
   g.setShader()
@@ -106,7 +125,7 @@ function love.draw()
  
  
  -- draw canvas data to screen
- g.scale(resolution.x,resolution.y)
+ g.scale(resolution.master)
   g.draw(screen)
  g.origin()
  

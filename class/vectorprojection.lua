@@ -53,7 +53,7 @@ end
 -- takes the camera's properties and projects 3D objects on to a 2D plane.
 function projection.CameraProjection(camera)
  return {
-   vector.new("CameraProjection", (camera.width/camera.height)*1/tan(camera.FOV*0.5 / 180 * π), nil,                             nil,                                                nil),
+   vector.new("CameraProjection", camera.ratio*1/tan(camera.FOV*0.5 / 180 * π),                 nil,                             nil,                                                nil),
    vector.new("CameraProjection", nil,                                                          1/tan(camera.FOV*0.5 / 180 * π), nil,                                                nil),
    vector.new("CameraProjection", nil,                                                          nil,                             camera.far/(camera.far-camera.near),                1  ),
    vector.new("CameraProjection", nil,                                                          nil,                             (-camera.far*camera.near)/(camera.far-camera.near), 0  )

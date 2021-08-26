@@ -71,3 +71,8 @@ Cleaned up rotations, changed how vector.multiplyMatrix works a bit and other ve
 
 decided to not redo all of the rendering stuff and instead just added the  whole camera movement on top and it worked! well.. it needs work but it works.
 So happy ^-^
+
+# v0.2.6
+Changed how the window scaling and stuff works.. again, made it so it's less flexable but to be fair that's fine considering it was broken before.
+Worked on camera stuff from the tutorial (wip still.)
+Changed tris to be drawn as meshes, they get applied a pattern depending on a variable (a wip how far they are from the camera in the z but add the other directions and such duh.) and ya added the pattern files under the name "dist" and the shader used.
